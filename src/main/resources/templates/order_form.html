@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default_layout}">
+<head>
+    <title>주문서 작성</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h2 class="mb-4">주문서 작성</h2>
+                <p>장바구니에 담긴 상품을 주문합니다.</p>
+                <!-- 실제로는 배송지 정보, 결제 수단 등을 입력받는 폼이 여기에 들어갑니다. -->
+                <form th:action="@{/order/create}" method="post">
+                    <button type="submit" class="btn btn-primary btn-lg">주문하기</button>
+                    <a href="/cart" class="btn btn-secondary btn-lg">장바구니로 돌아가기</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
