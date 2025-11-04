@@ -35,18 +35,22 @@ public class UserService implements UserDetailsService {
     @Transactional
     public User signup(UserSignupDto userSignupDto) {
         if (userRepository.findByUsername(userSignupDto.getUsername()) != null) {
-            throw new IllegalArgumentException("이미 존재하는 사용자 이름입니다.");
+            throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
+        }
+        if (!userSignupDto.getPassword().equals(userSignupDto.getPasswordConfirm())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
         if (userRepository.findByEmail(userSignupDto.getEmail()) != null) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
         }
 
-        User user = new User();
-        user.setUsername(userSignupDto.getUsername());
+        User user = new User(userSignupDto);
         user.setPassword(passwordEncoder.encode(userSignupDto.getPassword()));
-        user.setEmail(userSignupDto.getEmail());
-        user.setRole(Role.USER); // 기본 역할은 USER
 
         return userRepository.save(user);
+    }
+
+    public boolean isUsernameAvailable(String username) {
+        return userRepository.findByUsername(username) == null;
     }
 }

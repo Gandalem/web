@@ -1,39 +1,137 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bookmarket - <th:block layout:title-pattern="$CONTENT_TITLE$ | $LAYOUT_TITLE$"></th:block></title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Bookmarket</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
-        body { display: flex; flex-direction: column; min-height: 100vh; }
-        .content { flex: 1; }
-        footer { background-color: #f8f9fa; padding: 20px 0; text-align: center; }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .content {
+            flex: 1;
+        }
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        }
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 40px 0;
+        }
+        .footer a {
+            color: #adb5bd;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            color: white;
+        }
     </style>
 </head>
 <body>
-    <header class="bg-dark text-white p-3">
-        <div class="container d-flex justify-content-between align-items-center">
-            <h1 class="h4 mb-0"><a href="/" class="text-white text-decoration-none">Bookmarket</a></h1>
-            <nav>
-                <a href="/login" class="btn btn-outline-light btn-sm mr-2">로그인</a>
-                <a href="/signup" class="btn btn-outline-light btn-sm">회원가입</a>
-            </nav>
-        </div>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-white">
+            <div class="container-fluid">
+                <a class="navbar-brand" th:href="@{/}">
+                    <i class="fa-solid fa-book-open"></i> Bookmarket
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/}">홈</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/books}">도서 목록</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/board/list}">게시판</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item" sec:authorize="isAnonymous()">
+                            <a class="nav-link" th:href="@{/login}">
+                                <i class="fa-solid fa-right-to-bracket"></i> 로그인
+                            </a>
+                        </li>
+                        <li class="nav-item" sec:authorize="isAnonymous()">
+                            <a class="nav-link" th:href="@{/signup}">
+                                <i class="fa-solid fa-user-plus"></i> 회원가입
+                            </a>
+                        </li>
+                        <li class="nav-item" sec:authorize="isAuthenticated()">
+                            <a class="nav-link" th:href="@{/cart}">
+                                <i class="fa-solid fa-cart-shopping"></i> 장바구니
+                            </a>
+                        </li>
+                        <li class="nav-item" sec:authorize="isAuthenticated()">
+                            <a class="nav-link" th:href="@{/my-page}">
+                                <i class="fa-solid fa-user"></i> 마이페이지
+                            </a>
+                        </li>
+                        <li class="nav-item" sec:authorize="isAuthenticated()">
+                            <form th:action="@{/logout}" method="post" class="d-inline">
+                                <button type="submit" class="nav-link btn btn-link">
+                                    <i class="fa-solid fa-right-from-bracket"></i> 로그아웃
+                                </button>
+                            </form>
+                        </li>
+                        <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                            <a class="nav-link" th:href="@{/admin/books/new}">
+                                <i class="fa-solid fa-plus"></i> 도서 등록
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
     </header>
 
-    <div class="container mt-4 content">
-        <th:block layout:fragment="content"></th:block>
-    </div>
+    <main class="content container py-5">
+        <div layout:fragment="content">
+            <!-- Page content goes here -->
+        </div>
+    </main>
 
-    <footer class="mt-5">
+    <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 Bookmarket. All rights reserved.</p>
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Bookmarket</h5>
+                    <p>다양한 도서를 만나고, 나만의 서재를 만들어 보세요.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a th:href="@{/}">홈</a></li>
+                        <li><a th:href="@{/books}">도서 목록</a></li>
+                        <li><a th:href="@{/posts}">게시판</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fa-solid fa-location-dot"></i> Daegu, South Korea</li>
+                        <li><i class="fa-solid fa-envelope"></i> contact@bookmarket.com</li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>&copy; 2025 Bookmarket. All Rights Reserved.</p>
+            </div>
         </div>
     </footer>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

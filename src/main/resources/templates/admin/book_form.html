@@ -4,62 +4,82 @@
       layout:decorate="~{layouts/default_layout}">
 <head>
     <title>도서 등록/수정</title>
+    <style>
+        .book-form-container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body>
-    <div layout:fragment="content">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <h2 class="mb-4" th:text="${bookFormDto.id == null ? '새 도서 등록' : '도서 수정'}"></h2>
-                <form th:action="@{/admin/books}" th:object="${bookFormDto}" method="post" enctype="multipart/form-data">
-                    <input type="hidden" th:field="*{id}">
-                    <input type="hidden" th:field="*{imageUrl}">
+<div layout:fragment="content">
+    <div class="book-form-container">
+        <h2 class="mb-4 text-center" th:text="${bookFormDto.id == null ? '새 도서 등록' : '도서 수정'}"></h2>
+        <form th:action="@{/admin/books}" th:object="${bookFormDto}" method="post" enctype="multipart/form-data">
+            <input type="hidden" th:field="*{id}">
+            <input type="hidden" th:field="*{imageUrl}">
 
-                    <div class="form-group">
-                        <label for="title">도서명</label>
-                        <input type="text" th:field="*{title}" class="form-control" id="title" placeholder="도서명을 입력하세요">
-                        <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-danger"></p>
-                    </div>
-                    <div class="form-group">
+            <div class="form-floating mb-3">
+                <input type="text" th:field="*{title}" class="form-control" id="title" placeholder="도서명">
+                <label for="title">도서명</label>
+                <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-danger"></p>
+            </div>
+            <div class="row g-2 mb-3">
+                <div class="col-md">
+                    <div class="form-floating">
+                        <input type="text" th:field="*{author}" class="form-control" id="author" placeholder="저자">
                         <label for="author">저자</label>
-                        <input type="text" th:field="*{author}" class="form-control" id="author" placeholder="저자를 입력하세요">
                         <p th:if="${#fields.hasErrors('author')}" th:errors="*{author}" class="text-danger"></p>
                     </div>
-                    <div class="form-group">
+                </div>
+                <div class="col-md">
+                    <div class="form-floating">
+                        <input type="text" th:field="*{publisher}" class="form-control" id="publisher" placeholder="출판사">
                         <label for="publisher">출판사</label>
-                        <input type="text" th:field="*{publisher}" class="form-control" id="publisher" placeholder="출판사를 입력하세요">
                         <p th:if="${#fields.hasErrors('publisher')}" th:errors="*{publisher}" class="text-danger"></p>
                     </div>
-                    <div class="form-group">
+                </div>
+            </div>
+            <div class="row g-2 mb-3">
+                <div class="col-md">
+                    <div class="form-floating">
+                        <input type="number" th:field="*{price}" class="form-control" id="price" placeholder="가격">
                         <label for="price">가격</label>
-                        <input type="number" th:field="*{price}" class="form-control" id="price" placeholder="가격을 입력하세요">
                         <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="text-danger"></p>
                     </div>
-                    <div class="form-group">
+                </div>
+                <div class="col-md">
+                    <div class="form-floating">
+                        <input type="number" th:field="*{stock}" class="form-control" id="stock" placeholder="재고">
                         <label for="stock">재고</label>
-                        <input type="number" th:field="*{stock}" class="form-control" id="stock" placeholder="재고 수량을 입력하세요">
                         <p th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}" class="text-danger"></p>
                     </div>
-                    <div class="form-group">
-                        <label for="description">도서 설명</label>
-                        <textarea th:field="*{description}" class="form-control" id="description" rows="5" placeholder="도서 설명을 입력하세요"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="bookImage">도서 이미지</label>
-                        <input type="file" name="bookImage" class="form-control-file" id="bookImage">
-                        <div th:if="${bookFormDto.imageUrl != null}">
-                            <img th:src="${bookFormDto.imageUrl}" alt="현재 이미지" style="max-width: 100px; margin-top: 10px;">
-                        </div>
-                    </div>
-
-                    <div th:if="${errorMessage}" class="alert alert-danger">
-                        <p th:text="${errorMessage}"></p>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary" th:text="${bookFormDto.id == null ? '등록' : '수정'}"></button>
-                    <a href="/books" class="btn btn-secondary">취소</a>
-                </form>
+                </div>
             </div>
-        </div>
+            <div class="form-floating mb-3">
+                <textarea th:field="*{description}" class="form-control" id="description" placeholder="도서 설명" style="height: 150px"></textarea>
+                <label for="description">도서 설명</label>
+            </div>
+            <div class="mb-3">
+                <label for="bookImage" class="form-label">도서 이미지</label>
+                <input type="file" name="bookImage" class="form-control" id="bookImage">
+                <div th:if="${bookFormDto.imageUrl != null}" class="mt-2">
+                    <img th:src="${bookFormDto.imageUrl}" alt="현재 이미지" style="max-width: 150px; border-radius: 5px;">
+                </div>
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-danger">
+                <p th:text="${errorMessage}"></p>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a href="/books" class="btn btn-secondary">취소</a>
+                <button type="submit" class="btn btn-primary" th:text="${bookFormDto.id == null ? '등록' : '수정'}"></button>
+            </div>
+        </form>
     </div>
+</div>
 </body>
 </html>

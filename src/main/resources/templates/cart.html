@@ -4,52 +4,73 @@
       layout:decorate="~{layouts/default_layout}">
 <head>
     <title>장바구니</title>
+    <style>
+        .cart-container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body>
-    <div layout:fragment="content">
+<div layout:fragment="content">
+    <div class="cart-container">
         <h2 class="mb-4">장바구니</h2>
-        <div th:if="${cart == null or cart.cartItems.isEmpty()}" class="alert alert-info">
-            장바구니가 비어있습니다.
+        <div th:if="${cart == null or cart.cartItems.isEmpty()}" class="alert alert-info text-center">
+            <p class="h4">장바구니가 비어있습니다.</p>
+            <a th:href="@{/books}" class="btn btn-primary mt-3">도서 보러가기</a>
         </div>
         <div th:if="${cart != null and !cart.cartItems.isEmpty()}">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>도서 이미지</th>
-                        <th>도서명</th>
-                        <th>가격</th>
-                        <th>수량</th>
-                        <th>총 가격</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="cartItem : ${cart.cartItems}">
-                        <td><img th:src="${cartItem.book.imageUrl}" alt="도서 이미지" style="width: 50px; height: 50px; object-fit: cover;"></td>
-                        <td th:text="${cartItem.book.title}"></td>
-                        <td th:text="${#numbers.formatDecimal(cartItem.book.price, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
-                        <td>
-                            <form th:action="@{/cart/update}" method="post" class="form-inline">
-                                <input type="hidden" name="cartItemId" th:value="${cartItem.id}">
-                                <input type="number" name="count" th:value="${cartItem.count}" min="1" class="form-control form-control-sm w-25 d-inline-block">
-                                <button type="submit" class="btn btn-sm btn-outline-secondary ml-2">수정</button>
-                            </form>
-                        </td>
-                        <td th:text="${#numbers.formatDecimal(cartItem.totalPrice, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
-                        <td>
-                            <form th:action="@{/cart/delete}" method="post">
-                                <input type="hidden" name="cartItemId" th:value="${cartItem.id}">
-                                <button type="submit" class="btn btn-danger btn-sm">삭제</button>
-                            </form>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="text-right">
-                <h4>총 주문 금액: <span th:text="${#numbers.formatDecimal(cart.cartItems.stream().mapToInt(item -> item.totalPrice).sum(), 0, 'COMMA', 0, 'POINT')} + '원'"></span></h4>
-                <a href="/order" class="btn btn-success btn-lg">주문하기</a>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">도서</th>
+                            <th scope="col">가격</th>
+                            <th scope="col">수량</th>
+                            <th scope="col">총 가격</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="cartItem : ${cart.cartItems}">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img th:src="${cartItem.book.imageUrl}" alt="도서 이미지" style="width: 80px; height: 100px; object-fit: cover; border-radius: 5px;" class="me-3">
+                                    <div>
+                                        <h5 class="mb-0" th:text="${cartItem.book.title}"></h5>
+                                        <p class="text-muted mb-0" th:text="${cartItem.book.author}"></p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td th:text="|${#numbers.formatDecimal(cartItem.book.price, 0, 0, '.', ',')}원|"></td>
+                            <td>
+                                <form th:action="@{/cart/update}" method="post" class="d-flex align-items-center">
+                                    <input type="hidden" name="cartItemId" th:value="${cartItem.id}">
+                                    <input type="number" name="count" th:value="${cartItem.count}" min="1" class="form-control form-control-sm" style="width: 70px;">
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary ms-2">수정</button>
+                                </form>
+                            </td>
+                            <td th:text="|${#numbers.formatDecimal(cartItem.totalPrice, 0, 0, '.', ',')}원|"></td>
+                            <td>
+                                <form th:action="@{/cart/delete}" method="post">
+                                    <input type="hidden" name="cartItemId" th:value="${cartItem.id}">
+                                    <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex justify-content-end mt-4">
+                <div class="text-end">
+                    <h4>총 주문 금액: <span class="text-primary fw-bold" th:text="|${#numbers.formatDecimal(cart.cartItems.stream().mapToInt(item -> item.totalPrice).sum(), 0, ',', '.')}원|"></span></h4>
+                    <a href="/order" class="btn btn-success btn-lg mt-3">주문하기</a>
+                </div>
             </div>
         </div>
     </div>
+</div>
 </body>
 </html>

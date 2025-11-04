@@ -4,44 +4,78 @@
       layout:decorate="~{layouts/default_layout}">
 <head>
     <title>주문 상세</title>
+    <style>
+        .order-detail-container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body>
-    <div layout:fragment="content">
+<div layout:fragment="content">
+    <div class="order-detail-container">
         <h2 class="mb-4">주문 상세</h2>
-        <div th:if="${order == null}" class="alert alert-info">
-            주문 정보를 찾을 수 없습니다.
+        <div th:if="${order == null}" class="alert alert-info text-center">
+            <p class="h4">주문 정보를 찾을 수 없습니다.</p>
         </div>
         <div th:if="${order != null}">
-            <p><strong>주문 번호:</strong> <span th:text="${order.id}"></span></p>
-            <p><strong>주문일:</strong> <span th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></span></p>
-            <p><strong>주문 상태:</strong> <span th:text="${order.orderStatus}"></span></p>
-            <hr>
-            <h4>주문 상품</h4>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>도서명</th>
-                        <th>가격</th>
-                        <th>수량</th>
-                        <th>총 가격</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="orderItem : ${order.orderItems}">
-                        <td th:text="${orderItem.book.title}"></td>
-                        <td th:text="${#numbers.formatDecimal(orderItem.orderPrice, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
-                        <td th:text="${orderItem.count}"></td>
-                        <td th:text="${#numbers.formatDecimal(orderItem.totalPrice, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="text-right">
-                <h4>총 주문 금액: <span th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '원'"></span></h4>
+            <div class="card mb-4">
+                <div class="card-header">
+                    주문 정보
+                </div>
+                <div class="card-body">
+                    <p><strong>주문 번호:</strong> <span th:text="${order.id}"></span></p>
+                    <p><strong>주문일:</strong> <span th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></span></p>
+                    <p><strong>주문 상태:</strong> <span th:text="${order.orderStatus}" class="badge bg-primary"></span></p>
+                </div>
             </div>
-            <hr>
-            <a href="/order/orders" class="btn btn-secondary">내 주문 목록</a>
-            <a href="/" class="btn btn-primary">홈으로</a>
+
+            <h4 class="mb-3">주문 상품</h4>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">도서</th>
+                            <th scope="col">가격</th>
+                            <th scope="col">수량</th>
+                            <th scope="col">총 가격</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="orderItem : ${order.orderItems}">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img th:src="${orderItem.book.imageUrl}" alt="도서 이미지" style="width: 80px; height: 100px; object-fit: cover; border-radius: 5px;" class="me-3">
+                                    <div>
+                                        <h5 class="mb-0" th:text="${orderItem.book.title}"></h5>
+                                        <p class="text-muted mb-0" th:text="${orderItem.book.author}"></p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td th:text="|${#numbers.formatDecimal(orderItem.orderPrice, 0, 'COMMA', 0, 'POINT')}원|"></td>
+                            <td th:text="${orderItem.count}"></td>
+                            <td th:text="|${#numbers.formatDecimal(orderItem.totalPrice, 0, 'COMMA', 0, 'POINT')}원|"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-end mt-4">
+                <div class="text-end">
+                    <h4>총 주문 금액: <span class="text-primary fw-bold" th:text="|${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')}원|"></span></h4>
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="d-flex justify-content-center">
+                <a href="/order/orders" class="btn btn-secondary me-2">내 주문 목록</a>
+                <a href="/" class="btn btn-primary">홈으로</a>
+            </div>
         </div>
     </div>
+</div>
 </body>
 </html>

@@ -1,35 +1,64 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layouts/default_layout}">
 <head>
     <title th:text="${book.title}"></title>
+    <style>
+        .book-detail-container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .book-cover {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+    </style>
 </head>
 <body>
-    <div layout:fragment="content">
+<div layout:fragment="content">
+    <div class="book-detail-container">
         <div class="row">
-            <div class="col-md-4">
-                <img th:src="${book.imageUrl}" class="img-fluid" alt="도서 이미지">
+            <div class="col-md-4 text-center">
+                <img th:src="${book.imageUrl}" class="book-cover img-fluid shadow" alt="도서 이미지">
             </div>
             <div class="col-md-8">
-                <h2 th:text="${book.title}">도서 제목</h2>
-                <p class="text-muted">저자: <span th:text="${book.author}"></span></p>
-                <p class="text-muted">출판사: <span th:text="${book.publisher}"></span></p>
-                <h3 class="text-primary" th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')} + '원'">가격</h3>
-                <p>재고: <span th:text="${book.stock}"></span>개</p>
+                <h2 class="mb-3" th:text="${book.title}">도서 제목</h2>
+                <p class="text-muted"><strong>저자:</strong> <span th:text="${book.author}"></span></p>
+                <p class="text-muted"><strong>출판사:</strong> <span th:text="${book.publisher}"></span></p>
+                <h3 class="text-primary my-4" th:text="|${#numbers.formatDecimal(book.price, 0, 'COMMA', 0, 'POINT')}원|">가격</h3>
+                <p><strong>재고:</strong> <span th:text="${book.stock}"></span>개</p>
                 <hr>
                 <h4>도서 설명</h4>
                 <p th:text="${book.description}">도서 설명 내용</p>
                 <hr>
-                <div sec:authorize="hasRole('ADMIN')">
-                    <a th:href="@{/admin/books/{id}/edit(id=${book.id})}" class="btn btn-warning">수정</a>
-                    <form th:action="@{/admin/books/{id}/delete(id=${book.id})}" method="post" style="display:inline;">
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('정말로 삭제하시겠습니까?');">삭제</button>
-                    </form>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <a href="/books" class="btn btn-secondary">목록으로</a>
+                    </div>
+                    <div sec:authorize="hasRole('ROLE_ADMIN')">
+                        <a th:href="@{/admin/books/{id}/edit(id=${book.id})}" class="btn btn-warning">수정</a>
+                        <form th:action="@{/admin/books/{id}/delete(id=${book.id})}" method="post" class="d-inline ms-2">
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('정말로 삭제하시겠습니까?');">삭제</button>
+                        </form>
+                    </div>
+                    <div sec:authorize="isAuthenticated()">
+                        <form th:action="@{/cart/add}" method="post">
+                            <input type="hidden" name="bookId" th:value="${book.id}" />
+                            <div class="input-group">
+                                <input type="number" name="quantity" class="form-control" value="1" min="1" style="max-width: 80px;">
+                                <button type="submit" class="btn btn-primary">장바구니에 담기</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <a href="/books" class="btn btn-secondary">목록으로</a>
             </div>
         </div>
     </div>
+</div>
 </body>
 </html>

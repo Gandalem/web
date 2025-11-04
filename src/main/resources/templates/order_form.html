@@ -4,20 +4,116 @@
       layout:decorate="~{layouts/default_layout}">
 <head>
     <title>주문서 작성</title>
+    <style>
+        .order-form-container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body>
-    <div layout:fragment="content">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <h2 class="mb-4">주문서 작성</h2>
-                <p>장바구니에 담긴 상품을 주문합니다.</p>
-                <!-- 실제로는 배송지 정보, 결제 수단 등을 입력받는 폼이 여기에 들어갑니다. -->
-                <form th:action="@{/order/create}" method="post">
-                    <button type="submit" class="btn btn-primary btn-lg">주문하기</button>
-                    <a href="/cart" class="btn btn-secondary btn-lg">장바구니로 돌아가기</a>
+<div layout:fragment="content">
+    <div class="order-form-container">
+        <h2 class="mb-4 text-center">주문서 작성</h2>
+        <div class="row g-5">
+            <div class="col-md-7 col-lg-8">
+                <h4 class="mb-3">배송지 정보</h4>
+                <form th:action="@{/order/create}" method="post" class="needs-validation" novalidate>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label for="name" class="form-label">이름</label>
+                            <input type="text" class="form-control" id="name" placeholder="이름을 입력하세요" required>
+                            <div class="invalid-feedback">
+                                이름을 입력해주세요.
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="address" class="form-label">주소</label>
+                            <input type="text" class="form-control" id="address" placeholder="주소를 입력하세요" required>
+                            <div class="invalid-feedback">
+                                주소를 입력해주세요.
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="phone" class="form-label">연락처</label>
+                            <input type="tel" class="form-control" id="phone" placeholder="연락처를 입력하세요" required>
+                            <div class="invalid-feedback">
+                                연락처를 입력해주세요.
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <h4 class="mb-3">결제 수단</h4>
+
+                    <div class="my-3">
+                        <div class="form-check">
+                            <input id="credit" name="paymentMethod" type="radio" class="form-check-input" checked required>
+                            <label class="form-check-label" for="credit">신용카드</label>
+                        </div>
+                        <div class="form-check">
+                            <input id="debit" name="paymentMethod" type="radio" class="form-check-input" required>
+                            <label class="form-check-label" for="debit">계좌이체</label>
+                        </div>
+                        <div class="form-check">
+                            <input id="paypal" name="paymentMethod" type="radio" class="form-check-input" required>
+                            <label class="form-check-label" for="paypal">간편결제</label>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <button class="w-100 btn btn-primary btn-lg" type="submit">결제하기</button>
                 </form>
+            </div>
+            <div class="col-md-5 col-lg-4 order-md-last">
+                <h4 class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-primary">주문 요약</span>
+                    <span class="badge bg-primary rounded-pill" th:text="${cart.cartItems.size()}"></span>
+                </h4>
+                <ul class="list-group mb-3">
+                    <li class="list-group-item d-flex justify-content-between lh-sm" th:each="item : ${cart.cartItems}">
+                        <div>
+                            <h6 class="my-0" th:text="${item.book.title}"></h6>
+                            <small class="text-muted" th:text="|수량: ${item.count}|"></small>
+                        </div>
+                        <span class="text-muted" th:text="|${#numbers.formatDecimal(item.totalPrice, 0, 'COMMA', 0, 'POINT')}원|"></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>총 주문 금액</span>
+                        <strong th:text="|${#numbers.formatDecimal(cart.cartItems.stream().mapToInt(item -> item.totalPrice).sum(), 0, 'COMMA', 0, 'POINT')}원|"></strong>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
+</div>
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (function () {
+        'use strict'
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.querySelectorAll('.needs-validation')
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+</script>
 </body>
 </html>

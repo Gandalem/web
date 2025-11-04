@@ -1,12 +1,29 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default_layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>Error</title>
+    <title>오류</title>
+    <style>
+        .error-container {
+            text-align: center;
+            margin-top: 100px;
+        }
+        .error-code {
+            font-size: 10rem;
+            font-weight: bold;
+            color: #dc3545;
+        }
+    </style>
 </head>
 <body>
-    <h1>오류가 발생했습니다.</h1>
-    <p th:text="${errorMessage}">알 수 없는 오류가 발생했습니다.</p>
-    <a href="/">홈으로 돌아가기</a>
+<div layout:fragment="content">
+    <div class="error-container">
+        <div class="error-code" th:text="${status}">500</div>
+        <h1 class="display-4" th:text="${error}">Internal Server Error</h1>
+        <p class="lead" th:text="${message}">죄송합니다. 요청을 처리하는 중에 오류가 발생했습니다.</p>
+        <a href="/" class="btn btn-primary mt-3">홈으로 돌아가기</a>
+    </div>
+</div>
 </body>
 </html>

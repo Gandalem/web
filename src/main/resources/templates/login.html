@@ -4,32 +4,42 @@
       layout:decorate="~{layouts/default_layout}">
 <head>
     <title>로그인</title>
+    <style>
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 40px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body>
-    <div layout:fragment="content">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <h2 class="mb-4">로그인</h2>
-                <form th:action="@{/login}" method="post">
-                    <div th:if="${param.error}" class="alert alert-danger">
-                        아이디 또는 비밀번호가 올바르지 않습니다.
-                    </div>
-                    <div th:if="${param.logout}" class="alert alert-success">
-                        로그아웃되었습니다.
-                    </div>
-                    <div class="form-group">
-                        <label for="username">사용자 이름</label>
-                        <input type="text" class="form-control" id="username" name="username" placeholder="사용자 이름을 입력하세요" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">비밀번호</label>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="비밀번호를 입력하세요" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">로그인</button>
-                    <a href="/signup" class="btn btn-link">회원가입</a>
-                </form>
+<div layout:fragment="content">
+    <div class="login-container">
+        <h2 class="text-center mb-4">로그인</h2>
+        <form th:action="@{/login}" method="post">
+            <div th:if="${param.error}" class="alert alert-danger">
+                아이디 또는 비밀번호가 올바르지 않습니다.
             </div>
+            <div th:if="${param.logout}" class="alert alert-success">
+                로그아웃되었습니다.
+            </div>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="username" name="username" placeholder="사용자 이름" required>
+                <label for="username">사용자 이름</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control" id="password" name="password" placeholder="비밀번호" required>
+                <label for="password">비밀번호</label>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2">로그인</button>
+        </form>
+        <div class="text-center mt-3">
+            <p>계정이 없으신가요? <a th:href="@{/signup}">회원가입</a></p>
         </div>
     </div>
+</div>
 </body>
 </html>
