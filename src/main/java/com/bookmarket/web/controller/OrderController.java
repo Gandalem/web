@@ -57,12 +57,12 @@ public class OrderController {
     }
 
     // 사용자 주문 목록
-    @GetMapping("/")
+    @GetMapping
     public String orderList(Authentication authentication, Model model) {
         String username = authentication.getName();
         List<Order> orders = orderService.findOrdersByUser(username);
         model.addAttribute("orders", orders);
-        return "order_list"; // order_list.html 뷰가 필요합니다. (요청에 없으므로 추후 생성)
+        return "order_list";
     }
 
     // 주문 상세 페이지
