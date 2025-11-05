@@ -5,6 +5,7 @@ import com.bookmarket.web.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -41,6 +42,14 @@ public class UserController {
             return "signup";
         }
         return "redirect:/login";
+    }
+
+    @GetMapping("/my-page")
+    public String myPage(Authentication authentication, Model model) {
+        // UserService를 통해 사용자 정보를 가져와 모델에 추가
+        // User user = userService.findByUsername(authentication.getName());
+        // model.addAttribute("user", user);
+        return "my_page"; // my_page.html 템플릿 필요
     }
 
     @GetMapping("/api/users/check-username")

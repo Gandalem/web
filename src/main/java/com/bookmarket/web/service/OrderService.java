@@ -23,7 +23,8 @@ public class OrderService {
 
     // 장바구니 기반 주문 생성
     public Long createOrderFromCart(String username) {
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + username));
         Cart cart = cartRepository.findByUser(user)
                 .orElseThrow(() -> new IllegalArgumentException("장바구니가 비어있습니다."));
 
@@ -65,7 +66,8 @@ public class OrderService {
     // 사용자 주문 목록 조회
     @Transactional(readOnly = true)
     public List<Order> findOrdersByUser(String username) {
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + username));
         return orderRepository.findByUser(user);
     }
 }

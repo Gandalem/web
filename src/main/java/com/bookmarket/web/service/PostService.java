@@ -20,10 +20,8 @@ public class PostService {
 
     // 게시글 등록
     public Long savePost(String title, String content, String username) {
-        User author = userRepository.findByUsername(username);
-        if (author == null) {
-            throw new IllegalArgumentException("사용자를 찾을 수 없습니다: " + username);
-        }
+        User author = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + username));
         Post post = new Post();
         post.setTitle(title);
         post.setContent(content);

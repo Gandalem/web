@@ -1,6 +1,8 @@
 package com.bookmarket.web.controller;
 
+import com.bookmarket.web.entity.Cart;
 import com.bookmarket.web.entity.Order;
+import com.bookmarket.web.service.CartService;
 import com.bookmarket.web.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -15,10 +17,11 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/order")
+@RequestMapping("/orders")
 public class OrderController {
 
     private final OrderService orderService;
+    private final CartService cartService;
 
     // 주문서 작성 페이지 (장바구니에서 넘어옴)
     @GetMapping("/new")
@@ -32,20 +35,29 @@ public class OrderController {
     }
 
     // 주문 생성 처리
-    @PostMapping("/create")
+    @PostMapping
     public String createOrder(Authentication authentication, Model model) {
+        String username = authentication.getName();
         try {
-            String username = authentication.getName();
             Long orderId = orderService.createOrderFromCart(username);
-            return "redirect:/order/" + orderId;
+            return "redirect:/orders/" + orderId;
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
-            return "cart"; // 재고 부족 등의 오류 발생 시 장바구니 페이지로 리다이렉트
+            // 장바구니 페이지를 다시 렌더링하기 위해 필요한 데이터를 모델에 추가
+            Cart cart = cartService.findCartByUser(username);
+            model.addAttribute("cart", cart);
+            if (cart != null) {
+                int totalPrice = cart.getCartItems().stream()
+                                     .mapToInt(item -> item.getTotalPrice())
+                                     .sum();
+                model.addAttribute("totalPrice", totalPrice);
+            }
+            return "cart";
         }
     }
 
     // 사용자 주문 목록
-    @GetMapping("/orders")
+    @GetMapping("/")
     public String orderList(Authentication authentication, Model model) {
         String username = authentication.getName();
         List<Order> orders = orderService.findOrdersByUser(username);

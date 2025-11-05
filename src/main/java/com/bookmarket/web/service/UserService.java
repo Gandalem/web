@@ -24,17 +24,15 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found with username: " + username);
-        }
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())));
     }
 
     @Transactional
     public User signup(UserSignupDto userSignupDto) {
-        if (userRepository.findByUsername(userSignupDto.getUsername()) != null) {
+        if (userRepository.findByUsername(userSignupDto.getUsername()).isPresent()) {
             throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
         }
         if (!userSignupDto.getPassword().equals(userSignupDto.getPasswordConfirm())) {
@@ -51,6 +49,6 @@ public class UserService implements UserDetailsService {
     }
 
     public boolean isUsernameAvailable(String username) {
-        return userRepository.findByUsername(username) == null;
+        return userRepository.findByUsername(username).isEmpty();
     }
 }

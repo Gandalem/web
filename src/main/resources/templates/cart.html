@@ -44,7 +44,7 @@
                                     </div>
                                 </div>
                             </td>
-                            <td th:text="|${#numbers.formatDecimal(cartItem.book.price, 0, 0, '.', ',')}원|"></td>
+                            <td th:text="|${#numbers.formatDecimal(cartItem.book.price, 0, 'COMMA', 0, 'POINT')}원|"></td>
                             <td>
                                 <form th:action="@{/cart/update}" method="post" class="d-flex align-items-center">
                                     <input type="hidden" name="cartItemId" th:value="${cartItem.id}">
@@ -52,7 +52,7 @@
                                     <button type="submit" class="btn btn-sm btn-outline-secondary ms-2">수정</button>
                                 </form>
                             </td>
-                            <td th:text="|${#numbers.formatDecimal(cartItem.totalPrice, 0, 0, '.', ',')}원|"></td>
+                            <td th:text="|${#numbers.formatDecimal(cartItem.getTotalPrice(), 0, 'COMMA', 0, 'POINT')}원|"></td>
                             <td>
                                 <form th:action="@{/cart/delete}" method="post">
                                     <input type="hidden" name="cartItemId" th:value="${cartItem.id}">
@@ -65,8 +65,10 @@
             </div>
             <div class="d-flex justify-content-end mt-4">
                 <div class="text-end">
-                    <h4>총 주문 금액: <span class="text-primary fw-bold" th:text="|${#numbers.formatDecimal(cart.cartItems.stream().mapToInt(item -> item.totalPrice).sum(), 0, ',', '.')}원|"></span></h4>
-                    <a href="/order" class="btn btn-success btn-lg mt-3">주문하기</a>
+                    <h4>총 주문 금액: <span class="text-primary fw-bold" th:text="|${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT')}원|"></span></h4>
+                    <form th:action="@{/orders}" method="post">
+                        <button type="submit" class="btn btn-success btn-lg mt-3">주문하기</button>
+                    </form>
                 </div>
             </div>
         </div>

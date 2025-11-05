@@ -21,6 +21,12 @@ public class CartController {
         String username = authentication.getName();
         Cart cart = cartService.findCartByUser(username);
         model.addAttribute("cart", cart);
+        if (cart != null) {
+            int totalPrice = cart.getCartItems().stream()
+                                 .mapToInt(item -> item.getTotalPrice())
+                                 .sum();
+            model.addAttribute("totalPrice", totalPrice);
+        }
         return "cart";
     }
 

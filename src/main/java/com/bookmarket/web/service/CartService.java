@@ -26,7 +26,8 @@ public class CartService {
     public Long addCart(Long bookId, int count, String username) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 도서가 없습니다. id=" + bookId));
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + username));
 
         Cart cart = cartRepository.findByUser(user).orElseGet(() -> {
             Cart newCart = Cart.createCart(user);
@@ -47,7 +48,8 @@ public class CartService {
     // 장바구니 조회
     @Transactional(readOnly = true)
     public Cart findCartByUser(String username) {
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + username));
         return cartRepository.findByUser(user).orElse(null);
     }
 
